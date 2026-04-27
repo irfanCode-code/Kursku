@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 
+	"backend/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -19,11 +21,11 @@ func ConnectDatabase() {
 	}
 
 	err = database.AutoMigrate(
-		&Models.User{},
-		&Models.Course{},
-		&Models.Enrollment{},
-		&Models.Module{},
-		&Models.Grade{},
+		&models.User{},
+		&models.Enrollment{},
+		&models.Course{},
+		&models.Module{},
+		&models.Grade{},
 	)
 
 	if err != nil {
