@@ -20,7 +20,7 @@ func ConnectDatabase() {
 		panic("Gagal menyambung ke database! Periksa apakah MySQL sudah jalan.")
 	}
 
-	err = database.AutoMigrate(
+	database.AutoMigrate(
 		&models.User{},
 		&models.Enrollment{},
 		&models.Course{},
