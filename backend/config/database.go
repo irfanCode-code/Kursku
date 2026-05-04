@@ -17,7 +17,7 @@ func ConnectDatabase() {
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		panic("Gagal menyambung ke database! Periksa apakah MySQL sudah jalan.")
+		panic("Gagal menyambung ke database")
 	}
 
 	err = database.AutoMigrate(
@@ -31,6 +31,6 @@ func ConnectDatabase() {
 	if err != nil {
 		fmt.Println("Gagal migrasi", err)
 	}
-	fmt.Println("Koneksi & Migrate berhasil")
+	fmt.Println("Koneksi berhasil")
 	DB = database
 }
