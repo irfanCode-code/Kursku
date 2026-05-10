@@ -1,65 +1,48 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+import "@/app/globals.css"
+
+export default function Loginpage() {
+    return (
+       <div className="flex flex-col min-h-screen bg-white">
+            <header className="fixed top-0 left-0 w-full h-[92px] md:h-[92px] bg-white flex items-center pl-[20px] md:pl-[70px] border-b-[4px] border-[#7E7F97]">
+                <nav className="flex flex-col items-center pt-[12px] pb-[13px] md:pt-0 pb-0">
+                        <a href=""><img src="/logo.png" alt="logo" className="w-[67px] h-[67px] md:w-[92px] md:h-[92px] object-contain"/></a>
+                </nav>
+            </header>
+
+            <main className="flex flex-col flex-grow items-center mt-[132px] md:mt-[215px] ">
+                <div className="w-[259px] md:w-[368px]">
+                    <h1 className="font-bold text-[28px] md:text-[32px]">Masuk</h1>
+                    <p className="text-[12px] pt-[10px]">Ayo kita belajar bersama biar seru!</p>
+                </div>
+
+                <form action="" className="flex flex-col w-[259px] md:w-[368px] pt-[20px]"> 
+                    <label className="text-[15px] pb-[10px] ">Email</label>
+                    <input type="email" name="email" id="" placeholder="Masukan email" className="border-1 w-full pt-[10px] pb-[11px] pl-[15px] rounded-[15px] placeholder:text-[16px] placeholder:text-[#655F5F] md:placeholder:text-[18px]" required/>
+
+                    <label className="text-[15px] pb-[10px] pt-[20px]">Password</label>
+                    <input type="password" name="password" id="" placeholder="Masukan password" className="border-1 w-full pt-[10px] pb-[11px] pl-[15px] rounded-[15px] placeholder:text-[16px] placeholder:text-[#655F5F] md:placeholder:text-[18px]" required/>
+                    
+                    <button type="submit" className="bg-[#125E9C] pt-[14px] pb-[13px] rounded-[15px] mt-[33px] text-white border-1 border-black cursor-pointer hover:bg-[#133C5D] md:text-[20px]">Masuk</button>
+
+                    <div className="flex justify-center pt-[30px] md:text-[20px]">
+                        <p>Belum ada akun? <a href="" className="text-[#6781D9] hover:text-[#213578]">Daftar</a></p>
+                    </div>
+                </form>
+            </main>
+
+            <footer className="w-full h-[400px] border-t-[4px] border-[#7E7F97] mt-[56px] flex flex-col md:flex-row">
+                <div className="pl-[40px] pt-[30px] md:pl-[70px] md:pt-[20px]">
+                    <img src="/logo.png" alt="logo" className="w-[66px] h-[66px] md:w-[78px] md:h-[78px]"/>
+                    <p className="text-[#5C5858] text-[19px] md:text-[17px] pt-[20px] md:pt-[20px]">Belajar bersama di kursku</p>
+                </div>
+
+                <div className="pl-[40px] pt-[50px] md:pt-[39px] md:pl-[103px]">
+                    <h3 className="font-bold text-[21px] md:text-[20px]">Tentang kami</h3>
+                    <a href=""><p className="text-[19px] md:text-[18px] pt-[40px] md:pt-[30px]">tentang kursku</p></a>
+                </div>
+            </footer>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    )
 }
