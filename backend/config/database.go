@@ -2,9 +2,12 @@ package config
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"backend/models"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -12,7 +15,21 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	dsn := "root:1712@tcp(127.0.0.1:3306)/kursku_db?charset=utf8mb4&parseTime=True&loc=Local"
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("gagal memuat .env")
+	}
+
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASS")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	name := os.Getenv("DB_NAME")
+
+	if user == "" || pass == "" || host == "" || port == "" || name == "" {
+		panic("konfigurasi database tidak lengkap cek .env")
+	}
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pass, host, port, name)
 
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -20,17 +37,20 @@ func ConnectDatabase() {
 		panic("Gagal menyambung ke database")
 	}
 
-	database.AutoMigrate(
-		&models.User{},
-		&models.Enrollment{},
-		&models.Course{},
-		&models.Module{},
-		&models.Grade{},
-	)
+	fmt.Println("berhasil tersambung ke database")
 
-	if err != nil {
-		fmt.Println("Gagal migrasi", err)
+	if err := database.AutoMigrate(
+		&models.User{},
+		&models.Kursus{},
+		&models.Modul{},
+		&models.Nilai{},
+		&models.Progres{},
+		&models.Soal{},
+	); err != nil {
+		log.Fatal("gagal migrasi: " + err.Error())
 	}
+
 	fmt.Println("Koneksi berhasil")
+
 	DB = database
 }
