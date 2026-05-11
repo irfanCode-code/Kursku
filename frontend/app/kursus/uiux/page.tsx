@@ -20,34 +20,37 @@ export default function Uiux() {
             </header>
 
             <main className="md: mt-[140px] //">
-            <div className="md: ml-[300px] md: mr-[300px]">
-                <p className="md: text-[40px] md: ml-[40px]">UI/UX</p>
-                <hr />
-            </div>
+            <div className="md: ml-[400px]">
+                <h1 className="md: text-[38px]">UI/UX</h1>
+                <hr className="md: mr-[400px]" />
 
-            <div>
-                <details>
-                    <summary>
-                        <span></span>
-                    </summary>
-                    <div>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </details>
+                <div className="border-1 rounded-[12px] md: mt-[100px] md: mr-[500px] md: ml-[100px] ">
+                    <details className="">
+                        <summary className="list-none outline-none flex border-b-[1px] md: pt-[30px] md: pb-[30px] md: pl-[10px]">
+                            <img src="/arrow.png" alt="arrow" className=" md: h-[40px] md: w-[40px] rotate-y-180" />
+                            <span className="md: text-[28px]">Materi</span>
+                        </summary>
+                        <div>
+                            <div className="md: pl-[40px] md: pt-[30px] md: pr-[30px] md: pb-[30px]">
+                                <span className="">Roadmap</span>
+                                <span className="">Tahap,langkah-langkah ...</span>
+                            </div>
+                        </div>
+                    </details>
 
-                <details>
-                    <summary>
-                        <span></span>
-                    </summary>
-                    <div>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </details>
-            </div>
-
-            <div className="md: pt-[100px] flex flex-col md: ml-[450px] md: mr-[450px] ">
+                    <details className="">
+                        <summary className="list-none outline-none flex border-t-1 md: pt-[30px] md: pb-[30px] pl-[10px]">
+                            <img src="/arrow.png" alt="" className="md: h-[40px] md: w-[40px] rotate-y-180" />
+                            <span className="md: text-[28px]">Soal</span>
+                        </summary>
+                        <div>
+                            <div className="md: pl-[40px] md: pt-[30px] md: pr-[30px] md: pb-[30px] ">
+                                <span className="">Soal 1</span>
+                                <span className="">Soal latihan ...</span>
+                            </div>
+                        </div>
+                    </details>  
+                </div>
             </div>
             </main>
 
