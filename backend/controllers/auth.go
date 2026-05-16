@@ -141,9 +141,6 @@ func Login(c fiber.Ctx) error {
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		log.Printf("DEBUG: gagal bcrypt", err)
-		log.Printf("DEBUG: hash di DB: %s", user.Password)
-		log.Printf("DEBUG: input dari postman: %s", input.Password)
 		return c.Status(401).JSON(fiber.Map{
 			"message": "password salah",
 		})
