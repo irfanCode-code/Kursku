@@ -1,35 +1,57 @@
-"use client"
+'use client'
 
-import "@/app/globals.css"
+import{ Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import React, { useState } from "react" 
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
+import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useMutation } from "@tanstack/react-query"
 
-export default function Loginpage() {
-    return (
-       <div className="flex flex-col min-h-screen bg-white">
-            <header className="fixed top-0 left-0 w-full h-[92px] md:h-[92px] bg-white flex items-center pl-[20px] md:pl-[70px] border-b-[4px] border-[#7E7F97]">
-                <nav className="flex flex-col items-center pt-[12px] pb-[13px] md:pt-0 pb-0">
-                        <img src="/logo.png" alt="logo" className="w-[67px] h-[67px] md:w-[92px] md:h-[92px] object-contain"/>
-                </nav>
-            </header>
+export default function Login() {
+  const [showPass, setShowPass] = useState(false)
 
-            <main className="flex flex-col flex-grow items-center mt-[132px] md:mt-[215px] ">
-                <div className="w-[259px] md:w-[368px]">
-                    <h1 className="font-bold text-[28px] md:text-[32px]">Masuk</h1>
-                    <p className="text-[12px] pt-[10px]">Ayo kita belajar bersama biar seru!</p>
-                </div>
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get("email")
+    const password = formData.get("password")
 
-                <form action="" className="flex flex-col w-[259px] md:w-[368px] pt-[20px]"> 
-                    <label className="text-[15px] pb-[10px] ">Email</label>
-                    <input type="email" name="email" id="" placeholder="Masukan email" className="border-1 w-full pt-[10px] pb-[11px] pl-[15px] rounded-[15px] placeholder:text-[16px] placeholder:text-[#655F5F] md:placeholder:text-[18px]" required/>
+    console.log("data tanpa useState:", {email,password})
+  }
+  return (
+    <>
+      <header className="border-b-4 border-[#7E7F97]">
+        <img src="/logo.png" alt="logo" className="md:h-[110px] md:w-[110px] md: ml-[110px]" />
+      </header>
 
-                    <label className="text-[15px] pb-[10px] pt-[20px]">Password</label>
-                    <input type="password" name="password" id="" placeholder="Masukan password" className="border-1 w-full pt-[10px] pb-[11px] pl-[15px] rounded-[15px] placeholder:text-[16px] placeholder:text-[#655F5F] md:placeholder:text-[18px]" required/>
-                    
-                    <button type="submit" className="bg-[#125E9C] pt-[14px] pb-[13px] rounded-[15px] mt-[33px] text-white border-1 border-black cursor-pointer hover:bg-[#133C5D] md:text-[20px]">Masuk</button>
-
-                </form>
-            </main>
-
-            <footer className="w-full h-[400px] border-t-[4px] border-[#7E7F97] mt-[56px] flex flex-col md:flex-row"></footer>
+      <FieldGroup className="flex items-center md:mt-[200px]">
+        <div className="flex flex-col md:mr-[139px]">
+          <p className="text-[32px] font-bold">Login</p>
+          <p className="text-[15px] md:mt-[10px]">Ayo kita mulai belajar bersama biar seru!</p>
         </div>
-    )
+        <Field className="max-w-sm">
+          <FieldLabel htmlFor="input-required">Email<span className="text-destructive">*</span>
+          </FieldLabel>
+          <InputGroup className="md:h-[45px] md:w-[368px]">
+          <InputGroupInput id="email" type="email" name="email" placeholder="Masukan email" required className="md:placeholder:text-[18px] md:mt-[5px]"/>
+          </InputGroup>
+        </Field>
+
+        <Field className="max-w-sm">
+          <FieldLabel htmlFor="input-required">Password<span className="text-destructive">*</span>
+          </FieldLabel>
+          <InputGroup className="md:h-[45px] md:w-[368px]">
+            <InputGroupInput id="password" name="password" type={showPass ? "text": "password"} placeholder="Masukan password" required className="md:placeholder:text-[18px]"/>
+            <InputGroupAddon align="inline-end">
+              <button type="button" onClick={() => setShowPass(!showPass)} className="md:mr-[10px]">
+                {showPass ? <EyeOffIcon />: <EyeIcon />}
+              </button>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+
+        <Button type="submit" className="md:w-[368px] md:h-[45px] md:mr-[15px] bg-[#125E9C] md:text-[20px] hover:bg-[#133C5D]">Login</Button>      
+      </FieldGroup>
+    </>
+  )
 }
