@@ -5,9 +5,16 @@ import (
 	"backend/middleware"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func SetUp(app *fiber.App) {
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowMethods: []string{"GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS"},
+	}))
+
 	app.Post("/login", controllers.Login)
 
 	api := app.Group("/api", middleware.Auth)
