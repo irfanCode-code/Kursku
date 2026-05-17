@@ -23,7 +23,7 @@ export default function navbar() {
     return (
         <nav className="border-b-4 border-[#7E7F97] flex justify-between items-center w-full fixed top-0 left-0 z-50 bg-white">
             <div>
-                <a href=""><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[30px]" /></a>
+                <a href=""><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[70px]" /></a>
             </div>
 
             <div className="flex gap-25">
