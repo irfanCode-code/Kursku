@@ -11,7 +11,7 @@ export default function Footer() {
             </div>
             <div className="md: pt-[84px]">
                 <p className="text-[21px] font-bold">Tentang Kami</p>
-                <a href=""><p className="text-[19px] md:pt-[40px]">tentang kursus</p></a>
+                <a href="/about"><p className="text-[19px] md:pt-[40px]">tentang kursus</p></a>
             </div>
         </footer>
     )

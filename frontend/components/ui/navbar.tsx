@@ -27,8 +27,8 @@ export default function navbar() {
             </div>
 
             <div className="flex gap-25">
-                <a href="" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kursus</a>
-                <a href="" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Tentang Kami</a>
+                <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kursus</a>
+                <a href="/about" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Tentang Kami</a>
             </div>
 
             <div>
@@ -38,8 +38,12 @@ export default function navbar() {
                     </div>
                 ): (
                     <div className="flex gap-10 md:mr-[25px]">
-                        <button className="bg-[#112F58] text-white text-[20px] md:pl-[15px] md:pr-[15px] md:pt-[8px] md:pb-[8px] rounded-[12px] hover:bg-[#486894] cursor-pointer">Masuk</button>
-                        <button className="bg-[#A2BEE2] text-[20px] md:pl-[15px] md:pr-[15px] md:pt-[8px] md:pb-[8px] rounded-[12px] hover:bg-[#597DAC] cursor-pointer">Daftar</button>
+                        <button onClick={() => {
+                            router.push("/login")
+                        }} className="bg-[#112F58] text-white text-[20px] md:pl-[15px] md:pr-[15px] md:pt-[8px] md:pb-[8px] rounded-[12px] hover:bg-[#486894] cursor-pointer">Masuk</button>
+                        <button onClick={() => {
+                            router.push("/register")
+                        }} className="bg-[#A2BEE2] text-[20px] md:pl-[15px] md:pr-[15px] md:pt-[8px] md:pb-[8px] rounded-[12px] hover:bg-[#597DAC] cursor-pointer">Daftar</button>
                     </div>
                 )}
             </div>

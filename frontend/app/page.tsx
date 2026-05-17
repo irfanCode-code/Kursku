@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import Navbar from "@/components/ui/navbar"
 import Hero from "@/components/ui/hero"
 import Footer from "@/components/ui/footer"
+import { useRouter } from "next/navigation"
 
 export default function dashpage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const router = useRouter()
 
     useEffect(() => {
         const token = localStorage.getItem("token")
@@ -25,7 +27,9 @@ export default function dashpage() {
                             <img src="/course.png" alt="modul" className="md:h-[120px] md:w-[120px]" />
                             <p className="text-white text-[24px]">Modul Pelajaran</p>
                             <p className="text-white md:w-[200px] text-center md:mt-[25px]">Akses beberapa modul pembelajaran untuk belajar</p>
-                            <button className="bg-white md:pl-[27px] md:pr-[27px] md:pt-[10px] md:pb-[10px] rounded-[15px] md:mt-[75px] hover:bg-[#969FB0] cursor-pointer">Mulai Sekarang</button>
+                            <button onClick={() => {
+                                router.push("/kursus")
+                            }} className="bg-white md:pl-[27px] md:pr-[27px] md:pt-[10px] md:pb-[10px] rounded-[15px] md:mt-[75px] hover:bg-[#969FB0] cursor-pointer">Mulai Sekarang</button>
                         </div>
                         <div className="bg-[#112F58] md:w-[340px] md:h-[380px] flex flex-col items-center rounded-[15px]">
                             <img src="/lesson.png" alt="absen" className="md:h-[120px] md:w-[120px]" />
