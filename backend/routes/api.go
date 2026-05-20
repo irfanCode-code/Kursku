@@ -15,6 +15,7 @@ func SetUp(app *fiber.App) {
 		AllowMethods: []string{"GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS"},
 	}))
 
+	app.Post("/register", controllers.UserRegister)
 	app.Post("/login", controllers.Login)
 
 	api := app.Group("/api", middleware.Auth)
@@ -33,6 +34,20 @@ func SetUp(app *fiber.App) {
 	api.Get("/modul/:id", controllers.GetModul)
 	api.Get("/soal", controllers.GetSoal)
 	api.Get("/soal/:id", controllers.GetSoal)
+
+	// p2p
+	api.Post("/posts", controllers.CreatePost)
+	api.Get("/posts", controllers.GetPost)
+	api.Get("/posts/:id", controllers.GetPost)
+	api.Post("/comments", controllers.CreateComment)
+	api.Post("/comments/like", controllers.LikeComment)
+
+	// shop
+	api.Post("/shop/buy", controllers.BuyItem)
+	api.Get("/shop/owned", controllers.GetOwnedItem)
+
+	// join class
+	api.Post("/kelas/join", controllers.JoinKelas)
 
 	// nilai
 	api.Get("/progres/:user_id", controllers.GetProgresUser)

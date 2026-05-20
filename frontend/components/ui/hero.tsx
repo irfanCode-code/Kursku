@@ -12,12 +12,12 @@ export default function Hero({isLoggedIn}: Hero) {
     return (
         <section className="md:mt-[103px]">
             {isLoggedIn ? (
-                <div className="bg-[#D9D9D9] md:h-[546px]">
+                <div className="md:h-[546px] border-b-4 border-[#7E7F97]">
                     <h1 className="md:text-[40px] md:pt-[130px] font-bold md:pl-[170px] md:w-[500px]">Selama Datang di Kursku!</h1>
                     <p className="md:text-[24px] md:pl-[170px] md:mt-[30px]">Ayo mulai belajar!</p>
                 </div>
             ) : (
-                <div className="bg-[#D9D9D9] md:h-[546px]">
+                <div className="md:h-[546px] border-b-4 border-[#7E7F97]">
                     <h1 className="md:text-[40px] md:pt-[130px] md:pl-[170px] md:w-[600px] font-bold">Mari Belajar Bersama di Kursku!</h1>
                     <button onClick={() => {
                         router.push("/login")

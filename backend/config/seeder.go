@@ -30,3 +30,37 @@ func SeedAdmin() {
 		}
 	}
 }
+
+func SeedShopItem() {
+	var count int64
+	DB.Model(&models.ShopItem{}).Count(&count)
+
+	if count == 0 {
+		items := []models.ShopItem{
+			{
+				NamaItem:  "Border Perunggu",
+				Deskripsi: "profil sederhana",
+				HargaPoin: 100,
+				Tipe:      "avatar_frame",
+			},
+			{
+				NamaItem:  "Border Perak",
+				Deskripsi: "profil nuansa perak",
+				HargaPoin: 150,
+				Tipe:      "avatar_frame",
+			},
+			{
+				NamaItem:  "Border Emas",
+				Deskripsi: "Profil premium",
+				HargaPoin: 200,
+				Tipe:      "avatar_frame",
+			},
+		}
+		for _, item := range items {
+			if err := DB.Create(&item).Error; err != nil {
+				log.Println("gagal membuat seed item shop: ", err)
+			}
+		}
+		log.Println("seeder 3 item border berhasil ditambahkan")
+	}
+}

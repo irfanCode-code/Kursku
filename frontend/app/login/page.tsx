@@ -45,7 +45,9 @@ export default function Login() {
   return (
     <main>
       <header className="border-b-4 border-[#7E7F97]">
-        <img src="/logo.png" alt="logo" className="md:h-[110px] md:w-[110px] md: ml-[110px]" />
+        <img src="/logo.png" alt="logo" className="md:h-[110px] md:w-[110px] md: ml-[110px] cursor-pointer" onClick={() => {
+          router.push("/")
+        }} />
       </header>
 
       <form onSubmit={handleSubmit}>
@@ -80,7 +82,10 @@ export default function Login() {
            </InputGroup>
          </Field>
 
-         <Button type="submit" className="md:w-[368px] md:h-[45px] md:mr-[15px] bg-[#125E9C] md:text-[20px] hover:bg-[#133C5D]">Login</Button>      
+         <Button type="submit" className="md:w-[368px] md:h-[45px] md:mr-[15px] bg-[#125E9C] md:text-[20px] hover:bg-[#133C5D]">Login</Button>  
+         <p className="text-[19px]">Belum ada akun? <span className="text-[#6781D9] cursor-pointer" onClick={() => {
+          router.push("/register")
+         }}>Daftar</span></p>    
        </FieldGroup>
       </form>
     </main>

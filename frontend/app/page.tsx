@@ -5,6 +5,8 @@ import Navbar from "@/components/ui/navbar"
 import Hero from "@/components/ui/hero"
 import Footer from "@/components/ui/footer"
 import { useRouter } from "next/navigation"
+import Marquee from "@/components/ui/quotes"
+
 
 export default function dashpage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -22,28 +24,43 @@ export default function dashpage() {
                 <Navbar />
                 <Hero isLoggedIn={isLoggedIn} />
                 <section>
-                    <div className="bg-[#D9D9D9] md:mt-[126px] md:ml-[128px] md:mr-[126px] md:h-[550px] rounded-[15px] flex justify-center items-center gap-50">
-                        <div className="bg-[#112F58] md:w-[340px] md:h-[380px] flex flex-col items-center rounded-[15px]">
-                            <img src="/course.png" alt="modul" className="md:h-[120px] md:w-[120px]" />
-                            <p className="text-white text-[24px]">Modul Pelajaran</p>
-                            <p className="text-white md:w-[200px] text-center md:mt-[25px]">Akses beberapa modul pembelajaran untuk belajar</p>
-                            <button onClick={() => {
-                                router.push("/kursus")
-                            }} className="bg-white md:pl-[27px] md:pr-[27px] md:pt-[10px] md:pb-[10px] rounded-[15px] md:mt-[75px] hover:bg-[#969FB0] cursor-pointer">Mulai Sekarang</button>
+                    <div className="w-full flex flex-col justify-center items-center md:mt-[63px]">
+                        <div className="text-[40px] md:mb-[100px]">
+                            Fitur Yang Ada
                         </div>
-                        <div className="bg-[#112F58] md:w-[340px] md:h-[380px] flex flex-col items-center rounded-[15px]">
-                            <img src="/lesson.png" alt="absen" className="md:h-[120px] md:w-[120px]" />
-                            <p className="text-white text-[24px]">Misi Harian</p>
-                            <p className="text-white md:w-[170px] text-center md:mt-[17px]">Asah kemampuanmu setiap hari</p>
-                            <button className="bg-white md:pl-[27px] md:pr-[27px] md:pt-[10px] md:pb-[10px] rounded-[15px] md:mt-[75px] hover:bg-[#969FB0] cursor-pointer">Coming Soon</button>
+                        <div className="gap-40 flex">
+                            <div className=" md:h-[300px] md:w-[370px] rounded-[12px] shadow-xl hover:translate-y-[-20px] hover:shadow-xl/20 cursor-pointer" onClick={() => {
+                                router.push("/login")
+                            }}>
+                                <img src="/group.png" alt="group" className="md:h-[50px] md:w-[50px] md:ml-[30px] md:mt-[20px]" />
+                                <p className="text-[20px] md:ml-[30px] md:w-[150px] md:mt-[10px]">Diskusi Tugas & Catatan</p>
+                                <p></p>
+                                <p></p>
+                            </div>
+                            <div className="md:h-[300px] md:w-[370px] rounded-[12px] shadow-xl hover:translate-y-[-20px] hover:shadow-xl/20 cursor-pointer" onClick={() => {
+                                router.push("/login")
+                            }}>
+                                <img src="/book.png" alt="book" className="md:h-[50px] md:w-[50px] md:ml-[30px] md:mt-[20px]" />
+                                <p className="text-[20px] md:ml-[30px] md:mt-[10px]">Kelas Belajar</p>
+                                <p></p>
+                                <p></p>
+                            </div>
+                            <div className="md:h-[300px] md:w-[370px] rounded-[12px] shadow-xl hover:shadow-xl/20 hover:translate-y-[-20px]">
+                                <img src="/shop.png" alt="toko" className="md:h-[50px] md:w-[50px] md:ml-[30px] md:mt-[20px]" />
+                                <p className="text-[20px]  md:ml-[30px] md:mt-[10px]">Toko Penukaran</p>
+                                <p></p>
+                                <p></p>
+                            </div>
                         </div>
-                        <div className="bg-[#112F58] md:w-[340px] md:h-[380px] flex flex-col items-center rounded-[15px]">
-                            <img src="/note.png" alt="catatan" className="md:h-[120px] md:w-[120px]" />
-                            <p className="text-white text-[24px]">Catatan</p>
-                            <p className="text-white md:w-[170px] text-center md:mt-[17px]">Buat catatan supaya mudah mengingat</p>
-                            <button className="bg-white md:pl-[27px] md:pr-[27px] md:pt-[10px] md:pb-[10px] rounded-[15px] md:mt-[75px] hover:bg-[#969FB0] cursor-pointer">Coming Soon</button>
+                        <div className="flex gap-3 md:mt-[20px]">
+                            <div className="md:h-[8px] md:w-[30px] rounded bg-[#125E9C]"></div>
+                            <div className="md:h-[8px] md:w-[30px] rounded bg-[#D9D9D9]"></div>
+                            <div className="md:h-[8px] md:w-[30px] rounded bg-[#D9D9D9]"></div>
+                            <div className="md:h-[8px] md:w-[30px] rounded bg-[#D9D9D9]"></div>
+                            <div className="md:h-[8px] md:w-[30px] rounded bg-[#D9D9D9]"></div>
                         </div>
                     </div>
+                    <Marquee />
                 </section>
             </div>
             <Footer />

@@ -46,6 +46,11 @@ func ConnectDatabase() {
 		&models.Nilai{},
 		&models.Progres{},
 		&models.Soal{},
+		&models.KelasMember{},
+		&models.Post{},
+		&models.Comment{},
+		&models.LikeComment{},
+		&models.ShopItem{},
 	); err != nil {
 		log.Fatal("gagal migrasi: " + err.Error())
 	}

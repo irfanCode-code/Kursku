@@ -20,6 +20,7 @@ func main() {
 	config.ConnectDatabase()
 
 	config.SeedAdmin()
+	config.SeedShopItem()
 
 	app := fiber.New(fiber.Config{
 		AppName: "LMS api v1.0",
