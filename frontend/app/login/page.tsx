@@ -26,7 +26,7 @@ export default function Login() {
       console.log("berhasil login")
 
       localStorage.setItem("token", data.token)
-      router.push("/")
+      router.push("/dashboard")
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "gagal terhubung ke server";

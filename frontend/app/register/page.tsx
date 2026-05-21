@@ -11,21 +11,59 @@ import { useRouter } from "next/navigation"
 
 export default function Register() {
     const [showPass, setShowPass] = useState(false)
+    const [showConfPass, setShowConfPass] = useState(false)
+    const [formData, setFormData] = useState({
+      nama: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
+    })
+    const router = useRouter()
+
+    const mutation = useMutation({
+      mutationFn: async (newUserData: typeof formData) => {
+        const response = await axios.post("http://localhost:8080/api/register", newUserData)
+        return response.data
+      },
+      onSuccess: () => {
+        alert("berhasil registrasi")
+        router.push("/login")
+      },
+      onError: (error: any) => {
+        alert(error.response?.data?.message || "register gagal")
+      }
+    })
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value
+      })
+    }
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault()
+      if (formData.password !== formData.confirmPassword) {
+        alert("password tidak sama")
+        return
+      }
+      mutation.mutate(formData)
+    }
 
     return(
         <main>
       <header className="border-b-4 border-[#7E7F97]">
-        <img src="/logo.png" alt="logo" className="md:h-[110px] md:w-[110px] md: ml-[110px]" />
+        <img src="/logo.png" alt="logo" className="md:h-[110px] md:w-[110px] md: ml-[110px] cursor-pointer" onClick={() => {
+          router.push("/")
+        }} />
       </header>
 
-      <form>
-       <FieldGroup className="flex items-center md:mt-[200px]">
+      <form onSubmit={handleSubmit}>
+       <FieldGroup className="flex items-center md:mt-[130px]">
          <div className="flex flex-col md:mr-[139px]">
-           <p className="text-[32px] font-bold">Daftar</p>
-           <p className="text-[15px] md:mt-[10px]"></p>
+           <p className="text-[32px] font-bold md:ml-[70px]">Daftar</p>
+           <p className="text-[15px] md:mt-[10px] md:ml-[70px]">Gabung yuk dan ikuti pelajaran yang menyenangkan</p>
          </div>
 
-         <Field className="max-w-sm">
+         <Field className="max-w-sm md:mt-[30px]">
             <FieldLabel htmlFor="input-required">Nama<span className="text-destructive">*</span></FieldLabel>
             <InputGroup className="md:h-[45px] md:w-[368px]">
             <InputGroupInput id="nama" type="text" name="nama" placeholder="Masukkan nama" required className="md:placeholder:text-[18px] md:mt-[5px]"/>
@@ -54,18 +92,21 @@ export default function Register() {
          </Field>
 
          <Field className="max-w-sm">
-            <FieldLabel htmlFor="input-required">Confirm Password <span className="text-dectructive">*</span></FieldLabel>
+            <FieldLabel htmlFor="input-required">Confirm Password <span className="text-destructive">*</span></FieldLabel>
             <InputGroup className="md:h-[45px] md:w-[368px]">
-            <InputGroupInput id="confirmPassword" name="confirm password" type={showPass ?"text": "password"} placeholder="Masukkan password" required className="md:placeholder:text-[18px]"></InputGroupInput>
+            <InputGroupInput id="confirmPassword" name="confirm password" type={showConfPass ?"text": "password"} placeholder="Masukkan password" required className="md:placeholder:text-[18px]"></InputGroupInput>
             <InputGroupAddon align="inline-end">
-                <button type="button" onClick={() => setShowPass(!showPass)} className="md:mr-[10px]">
-                {showPass ? <EyeOffIcon />: <EyeIcon/>}
+                <button type="button" onClick={() => setShowConfPass(!showConfPass)} className="md:mr-[10px]">
+                {showConfPass ? <EyeOffIcon />: <EyeIcon/>}
                     </button>
             </InputGroupAddon>
             </InputGroup>
          </Field>
 
-         <Button type="submit" className="md:w-[368px] md:h-[45px] md:mr-[15px] bg-[#125E9C] md:text-[20px] hover:bg-[#133C5D]">Daftar</Button>      
+         <Button type="submit" disabled={mutation.isPending} className="md:w-[368px] md:h-[45px] md:mr-[15px] bg-[#125E9C] md:text-[20px] hover:bg-[#133C5D]">{mutation.isPending ? "mendaftarkan..." : "Daftar"}</Button>
+         <p>Sudah ada akun? <span onClick={() => {
+          router.push("/login")
+         }} className="cursor-pointer text-[#6781D9]">Login</span></p>
        </FieldGroup>
       </form>
     </main>
