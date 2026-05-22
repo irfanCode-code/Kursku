@@ -26,24 +26,24 @@ export default function navbar() {
                 {isLoggedIn ? (
                     <div className="flex items-center">
                       <div>
-                        <a href=""><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[70px]" /></a>
+                        <a href="/"><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[70px]" /></a>
                       </div>
 
                     <div className="flex gap-25 md: ml-[600px]">
                         <a href="/dashboard" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Home</a>
                         <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
-                        <a href="/about" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Forum</a>
+                        <a href="/forum" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Forum</a>
                     </div>
                   </div>
                 ) : (
                     <div className="flex items-center">
                       <div>
-                        <a href=""><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[70px]" /></a>
+                        <a href="/"><img src="/logo.png" alt="logo" className="md:h-[100px] md:w-[100px] md:ml-[70px]" /></a>
                       </div>
                     
-                    <div className="flex gap-25 md:ml-[600px]">
-                        <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kursus</a>
-                        <a href="/about" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Tentang Kami</a>
+                    <div className="flex gap-25 md:ml-[600px]"> 
+                        <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
+                        <a href="/forum" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Forum</a>
                     </div>
                   </div>
                 )}
