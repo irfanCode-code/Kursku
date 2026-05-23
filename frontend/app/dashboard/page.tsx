@@ -5,11 +5,13 @@ import Footer from "@/components/ui/footer"
 import Autoplay from "embla-carousel-autoplay"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem,CarouselNext } from "@/components/ui/carousel"
 import * as React from "react"
+import { useRouter } from "next/navigation"
 
 export default function Dashboard() {
     const [api, setApi] = React.useState<CarouselApi>()
     const [current, setCurrent] = React.useState(0)
     const [count, setCount] = React.useState(0)
+    const router = useRouter()
 
     React.useEffect(() => {
         if(!api) return
@@ -59,7 +61,9 @@ export default function Dashboard() {
             </div>
 
             <div className="bg-[#F9FAFF] md:w-[1150px] md:ml-[400px] md:h-[812px] md:mt-[67px] rounded-[15px] shadow-xl/10 flex items-center justify-center gap-[100px] overflow-hidden relative">
-                <div className="md:w-[433px] md:h-[618px] rounded-[15px] shadow-xl/10 hover:translate-y-[-10px] z-10 cursor-pointer">
+                <div className="md:w-[433px] md:h-[618px] rounded-[15px] shadow-xl/10 hover:translate-y-[-10px] z-10 cursor-pointer" onClick={() => {
+                    router.push("/forum")
+                }}>
                     <div className="bg-[#B6B6B6] md:h-[275px] rounded-t-[15px] flex items-center justify-center">
                         <img src="/forum.png" alt="forum" className="md:w-[273px] md:h-[273px]" />
                     </div>
@@ -70,7 +74,9 @@ export default function Dashboard() {
                     <div className="bg-[#BABABA] md:h-[37px] rounded-b-[15px] "></div>
                 </div>
 
-                <div className="md:w-[433px] md:h-[618px] rounded-[15px] shadow-xl/10 hover:translate-y-[-10px] z-10 cursor-pointer">
+                <div className="md:w-[433px] md:h-[618px] rounded-[15px] shadow-xl/10 hover:translate-y-[-10px] z-10 cursor-pointer" onClick={() => {
+                    router.push("/kelas")
+                }}>
                     <div className="bg-[#B6B6B6] md:h-[275px] rounded-t-[15px] flex items-center justify-center">
                         <img src="/kelas.png" alt="kelas" className="md:w-[220px] md:h-[220px]" />
                     </div>

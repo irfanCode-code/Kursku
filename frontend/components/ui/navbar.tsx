@@ -31,7 +31,7 @@ export default function navbar() {
 
                     <div className="flex gap-25 md: ml-[600px]">
                         <a href="/dashboard" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Home</a>
-                        <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
+                        <a href="/kelas" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
                         <a href="/forum" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Forum</a>
                     </div>
                   </div>
@@ -42,7 +42,7 @@ export default function navbar() {
                       </div>
                     
                     <div className="flex gap-25 md:ml-[600px]"> 
-                        <a href="/kursus" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
+                        <a href="/kelas" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Kelas</a>
                         <a href="/forum" className="md:text-[20px] font-bold md:pr-[12px] md:pl-[12px] md:pt-[6px] md:pb-[6px] rounded-[12px] hover:bg-[#7E7F97]">Forum</a>
                     </div>
                   </div>
