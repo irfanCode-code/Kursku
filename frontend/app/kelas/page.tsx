@@ -4,46 +4,79 @@ import Navbar from "@/components/ui/navbar"
 import Footer from "@/components/ui/footer"
 import React, { useState } from "react"
 import Link from "next/link"
+import { useEffect } from "react"
 
 export default function kursus() {
     const [daftarKelas, setDaftarKelas] = useState([
-        { id: 1, nama: "Matematika", status: "diikuti", author: "james clear"},
-        { id: 2, nama: "Bahasa Inggris", status: "diikuti", author: "charles duhigg"},
-    ])
+    // Data untuk Tab "Diikuti" (Role Siswa)
+    { id: 1, nama: "Matematika", status: "diikuti", author: "James Clear", role: "siswa" },
+    { id: 2, nama: "Bahasa Inggris", status: "diikuti", author: "Charles Duhigg", role: "siswa" },
+    
+    // Data untuk Tab "Kelasku" (Role Guru)
+    { id: 3, nama: "Pemrograman Web", status: "dibuat", author: "Guru (kamu)", role: "guru", code: "WEB123" },
+    { id: 4, nama: "Desain Grafis", status: "dibuat", author: "Guru (kamu)", role: "guru", code: "DSN456" },
+])
+    useEffect(() => {
+    const saved = localStorage.getItem("daftarKelas");
+    if (saved) {
+        setDaftarKelas(JSON.parse(saved));
+    }
+}, []);
 
     const [tabAktif, setTabAktif] = useState<"diikuti" | "kelasku">("diikuti")
     const [activeModal, setActiveModal] = useState<"join" | "buat" | null>(null)
     const [inputValue, setInputValue] = useState("")
+    const generateCode = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase()}
 
     const handleJoinSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if(!inputValue.trim()) return
+    e.preventDefault();
+    if (!inputValue.trim()) return;
 
+    // Cari apakah ada kelas dengan kode yang cocok
+    const kelasDitemukan = daftarKelas.find((k) => k.code === inputValue.trim().toUpperCase());
+
+    if (kelasDitemukan) {
+        // Jika ditemukan, join kelas
         const kelasBaru = {
             id: Date.now(),
-            nama: `Kelas baru yang diikuti (${inputValue})`,
+            nama: `Ikut: ${kelasDitemukan.nama}`,
             status: "diikuti",
-            author: "guru pendamping"
-        }
-        setDaftarKelas([...daftarKelas, kelasBaru])
-        setInputValue("")
-        setActiveModal(null)
+            author: kelasDitemukan.author,
+            role: "siswa"
+        };
+        setDaftarKelas([...daftarKelas, kelasBaru]);
+        setInputValue("");
+        setActiveModal(null);
+        setTabAktif("diikuti");
+    } else {
+        // Jika tidak ditemukan, tampilkan error
+        alert("Kode kelas tidak ditemukan! Silakan periksa kembali kode Anda.");
     }
+};
 
     const handleBuatSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if(!inputValue.trim()) return
+    e.preventDefault();
+    if (!inputValue.trim()) return;
 
-        const kelasBaru = {
-            id: Date.now(),
-            nama: inputValue,
-            status: "dibuat",
-            author: "Guru (kamu)"
-        }
-        setDaftarKelas([...daftarKelas, kelasBaru])
-        setInputValue("")
-        setActiveModal(null)
-    }
+    const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const kelasBaru = {
+        id: Date.now(),
+        nama: inputValue,
+        status: "dibuat",
+        author: "Guru (kamu)",
+        role: "guru",
+        code: newCode 
+    };
+
+    const dataBaru = [...daftarKelas, kelasBaru];
+    setDaftarKelas(dataBaru);
+    localStorage.setItem("daftarKelas", JSON.stringify(dataBaru)); // Simpan
+    
+    setInputValue("");
+    setActiveModal(null);
+    setTabAktif("kelasku");
+}
 
     const kelasTampil = daftarKelas.filter((kelas) => {
         if (tabAktif === "diikuti") {
@@ -80,18 +113,21 @@ export default function kursus() {
 
             <div className="max-w-[1100px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12">
                 {kelasTampil.map((kelas) => (
-                    <Link href={`/kelas/${kelas.id}`} key={kelas.id} className="border border-gray-200 shadow-sm flex flex-col h-64 rounded-[15px]">
-                        <div className="w-full bg-[#D9D9D9] flex items-center justify-center rounded-t-[15px]">
-                            <img src="/openBook.png" alt="kelas" />
-                        </div>
+        <Link href={`/kelas/${kelas.id}`} key={kelas.id} className="border border-gray-200 shadow-sm flex flex-col h-64 rounded-[15px]">
+            <div className="w-full bg-[#D9D9D9] flex items-center justify-center rounded-t-[15px]">
+                <img src="/openBook.png" alt="kelas" />
+            </div>
 
-                        <div className="bg-[#A5C8FF] p-4 rounded-b-[15px]">
-                            <div className="text-[30px]">{kelas.nama}</div>
-                            <div className="text-[15px]">{kelas.author}</div>
-                        </div>
-                    </Link>
-              ))}
-              {kelasTampil  .length === 0 && (
+            <div className="bg-[#A5C8FF] p-4 rounded-b-[15px] flex flex-col justify-between h-full">
+                <div>
+                    <div className="text-[30px] font-bold">{kelas.nama}</div>
+                    <div className="text-[15px]">{kelas.author}</div>
+                </div>
+                {/* Bagian badge role sudah dihapus agar kartu tetap bersih */}
+            </div>
+        </Link>
+    ))}
+              {kelasTampil.length === 0 && (
                 <div className="col-span-full text-center py-12 text-gray-400">
                   Belum ada kelas
                 </div>
@@ -126,7 +162,7 @@ export default function kursus() {
                     <div className="bg-white md:w-[701px] md:h-[357px] shadow-xl/20 rounded-[15px] overflow-hidden relative">
                         <h3 className="md:text-[28px] md:mt-[80px] md:ml-[124px]">Buat Kelas</h3>
                         <form onSubmit={handleBuatSubmit} className="md:ml-[124px]">
-                            <input type="text" autoFocus value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Masukan Kode Kelas" className="border-1 border-black md:w-[487px] md:h-[60px] rounded-[20px] md:mt-[15px] md:placeholder:text-[24px] text-[24px] pl-6" />
+                            <input type="text" autoFocus value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Masukan Judul Kelas" className="border-1 border-black md:w-[487px] md:h-[60px] rounded-[20px] md:mt-[15px] md:placeholder:text-[24px] text-[24px] pl-6" />
                             <div className="gap-10 flex">
                                 <button type="button" onClick={() => {
                                     setActiveModal(null)
