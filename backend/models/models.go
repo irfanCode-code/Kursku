@@ -99,3 +99,28 @@ type UseTransaction struct {
 	ShopItemID uint     `gorm:"not null;uniqueIndex:idx_user_item" json:"shop_item_id"`
 	ShopItem   ShopItem `gorm:"foreignKey:ShopItemID" json:"shop_item"`
 }
+
+type KontenKelas struct {
+	gorm.Model
+	KelasID   uint    `json:"kelas_id"`
+	Tipe      string  `json:"tipe"` // "materi" | "tugas"
+	Judul     string  `json:"judul"`
+	Deskripsi string  `json:"deskripsi"`
+	Deadline  *string `json:"deadline"` // nullable
+	File      *string `json:"file"`     // nullable, nama file
+}
+
+type Kelas struct {
+	gorm.Model
+	Nama string `json:"nama"`
+	Code string `json:"code" gorm:"uniqueIndex"` // kode unik untuk join
+}
+
+// KelasAnggota — menyimpan role user PER kelas
+// role: "guru" | "siswa"
+type KelasAnggota struct {
+	gorm.Model
+	KelasID uint   `json:"kelas_id"`
+	UserID  uint   `json:"user_id"`
+	Role    string `json:"role"` // "guru" | "siswa"
+}

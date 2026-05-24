@@ -111,9 +111,9 @@ export default function kursus() {
             </div>
                     <hr className="border-1 border-black md:w-[1500px] md:ml-[200px]" />
 
-            <div className="max-w-[1100px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12">
+            <div className="max-w-[1100px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 ">
                 {kelasTampil.map((kelas) => (
-        <Link href={`/kelas/${kelas.id}`} key={kelas.id} className="border border-gray-200 shadow-sm flex flex-col h-64 rounded-[15px]">
+        <Link href={`/kelas/${kelas.id}`} key={kelas.id} className="border border-gray-200 shadow-sm flex flex-col h-64 rounded-[15px] md:mb-[100px]">
             <div className="w-full bg-[#D9D9D9] flex items-center justify-center rounded-t-[15px]">
                 <img src="/openBook.png" alt="kelas" />
             </div>

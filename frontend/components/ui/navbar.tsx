@@ -51,7 +51,16 @@ export default function navbar() {
 
             <div>
                 {isLoggedIn ? (
-                    <div className="bg-[#D9D9D9] md:mr-[25px] md:h-[50px] md:w-[50px] rounded-[100px] flex items-center justify-center">
+                    <div className="flex gap-5 md:mr-[25px] translate-x-60 cursor-pointer" onClick={() => {router.push("/shop")}}>
+                        <p className="text-[20px]">0</p>
+                        <img src="/coin.png" alt="coin" className="md:h-[30px] md:w-[30px]" />
+                    </div>
+                ) : ""}
+            </div>
+
+            <div>
+                {isLoggedIn ? (
+                    <div className="bg-[#D9D9D9] md:mr-[25px] md:h-[50px] md:w-[50px] rounded-[100px] flex items-center justify-center cursor-pointer" onClick={() => {router.push("/profile")}}>
                         {initial(username)}
                     </div>
                 ): (
