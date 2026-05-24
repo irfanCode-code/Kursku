@@ -30,7 +30,7 @@ export default function kursus() {
         setActiveModal(null)
     }
 
-    const handleBuatSumbit = (e: React.FormEvent) => {
+    const handleBuatSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if(!inputValue.trim()) return
 
@@ -110,6 +110,29 @@ export default function kursus() {
                                     setInputValue("")
                                 }} className="text-[26px] md:mt-[30px] bg-[#125E9C] md:w-[144px] md:h-[51px] rounded-[31px] text-white cursor-pointer">Batal</button>
                                 <button type="submit" className="text-[26px] md:mt-[30px] bg-[#125E9C] md:w-[144px] md:h-[51px] rounded-[31px] text-white cursor-pointer">Join</button>
+                            </div>
+                        </form>
+
+                        <hr className="md:border-[5px] md:w-[250px] border-black absolute md:ml-[500px] -rotate-45" />
+                        <hr className="md:border-[5px] md:w-[250px] border-black absolute md:ml-[530px] -rotate-45" />
+                        <hr className="md:border-[5px] md:w-[250px] border-black absolute md:ml-[560px] -rotate-45" />
+                        <hr className="md:border-[5px] md:w-[250px] border-black absolute md:ml-[590px] -rotate-45" />
+                    </div>
+                </div>
+            )}
+
+            {activeModal === "buat" && (
+                <div className="bg-white/30 flex justify-center items-center fixed inset-0 backdrop-blur-xs">
+                    <div className="bg-white md:w-[701px] md:h-[357px] shadow-xl/20 rounded-[15px] overflow-hidden relative">
+                        <h3 className="md:text-[28px] md:mt-[80px] md:ml-[124px]">Buat Kelas</h3>
+                        <form onSubmit={handleBuatSubmit} className="md:ml-[124px]">
+                            <input type="text" autoFocus value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Masukan Kode Kelas" className="border-1 border-black md:w-[487px] md:h-[60px] rounded-[20px] md:mt-[15px] md:placeholder:text-[24px] text-[24px] pl-6" />
+                            <div className="gap-10 flex">
+                                <button type="button" onClick={() => {
+                                    setActiveModal(null)
+                                    setInputValue("")
+                                }} className="text-[26px] md:mt-[30px] bg-[#125E9C] md:w-[144px] md:h-[51px] rounded-[31px] text-white cursor-pointer">Batal</button>
+                                <button type="submit" className="text-[26px] md:mt-[30px] bg-[#125E9C] md:w-[144px] md:h-[51px] rounded-[31px] text-white cursor-pointer">Buat</button>
                             </div>
                         </form>
 
