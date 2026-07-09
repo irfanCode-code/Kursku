@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v3"
@@ -8,7 +9,9 @@ import (
 )
 
 func main() {
+	fmt.Println("memulai server...")
 	config.ConnectDatabase()
+	fmt.Println("berhasil terkoneksi ke database")
 	app := fiber.New()
 
 	app.Get("/", func(c fiber.Ctx) error {
