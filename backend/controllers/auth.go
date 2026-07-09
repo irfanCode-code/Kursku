@@ -130,3 +130,58 @@ func Login(c fiber.Ctx) error {
 		},
 	})
 }
+
+func GetUserProfil(c fiber.Ctx) error {
+	userID := c.Params("id")
+	var user models.User
+
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "user tidak ditemukan",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "berhasil mengambil user",
+		"data": fiber.Map{
+			"id":    user.ID,
+			"nama":  user.Nama,
+			"email": user.Email,
+			"role":  user.Role,
+		},
+	})
+}
+
+func GetKursusSiswa(c fiber.Ctx) error {
+	kursusID := c.Params("id")
+	var partisipasi []models.Progress
+
+	err := config.DB.Preload("siswa").Where("kursus_id = ?", kursusID).Find(&partisipasi).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "gagal mengambil data kursus",
+		})
+	}
+
+	type SiswaFormat struct {
+		ID       uint    `json:"id"`
+		Nama     string  `json:"nama"`
+		Email    string  `json:"email"`
+		Progress float32 `json:"progress"`
+	}
+
+	var siswaList []SiswaFormat
+	for _, p := range partisipasi {
+		siswaList = append(siswaList, SiswaFormat{
+			ID:       p.SiswaID,
+			Nama:     p.Siswa.Nama,
+			Email:    p.Siswa.Email,
+			Progress: p.Progress,
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "berhasil mengambil daftar anggota",
+		"total":   len(siswaList),
+	})
+}
