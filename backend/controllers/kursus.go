@@ -153,3 +153,88 @@ func GetKursusByID(c fiber.Ctx) error {
 		"kursus":  kursus,
 	})
 }
+
+func GetKelasKu(c fiber.Ctx) error {
+	guruID := c.Params("guru_id")
+	var daftarKursus []models.Kursus
+
+	if err := config.DB.Where("guru_id = ?", guruID).Find(&daftarKursus).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "gagal mengambil daftar kelasku",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "berhasil mengambil daftar kelasku",
+		"total":   len(daftarKursus),
+		"data":    daftarKursus,
+	})
+}
+
+func JoinKelas(c fiber.Ctx) error {
+	type JoinRequest struct {
+		SiswaID  uint   `json:"siswa_id"`
+		JoinCode string `json:"join_code"`
+	}
+
+	var input JoinRequest
+	if err := c.Bind().Body(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "format tidak valid",
+		})
+	}
+
+	var kursus models.Kursus
+	if err := config.DB.Where("join_code = ?", input.JoinCode).First(&kursus).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "kode kelas tidak ditemukan",
+		})
+	}
+
+	var checkProgress models.Progress
+	err := config.DB.Where("kursus_id = ? AND siswa_id = ?", kursus.ID, input.SiswaID).First(&checkProgress).Error
+	if err == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "kamu sudah bergabung di kelas ini",
+		})
+	}
+
+	newProgress := models.Progress{
+		SiswaID:  input.SiswaID,
+		KursusID: kursus.ID,
+		Progress: 0.0,
+	}
+
+	if err := config.DB.Create(&newProgress).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "gagal bergabung",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "berhasil bergabung",
+		"data":    kursus,
+	})
+}
+
+func GetKelasDiikuti(c fiber.Ctx) error {
+	siswaID := c.Params("siswa_id")
+	var daftar []models.Progress
+
+	if err := config.DB.Preload("kursus").Where("siswa_id = ?", siswaID).Find(&daftar).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "gagal mengambil kelas yang diikuti",
+		})
+	}
+
+	var daftarDiikuti []models.Kursus
+	for _, e := range daftar {
+		daftarDiikuti = append(daftarDiikuti, e.Kursus)
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "berhasil mengambil daftar yang diikuti",
+		"total":   len(daftarDiikuti),
+		"data":    daftarDiikuti,
+	})
+}

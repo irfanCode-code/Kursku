@@ -75,6 +75,7 @@ func CreateSubmission(c fiber.Ctx) error {
 			"message": "gagal mengirimkan tugas ke database",
 		})
 	}
+	_ = AutoProgress(siswaID, modul.KursusID)
 
 	return c.JSON(fiber.Map{
 		"message": "berhasil mengirimkan tugas",
@@ -161,6 +162,8 @@ func DeleteSubmission(c fiber.Ctx) error {
 			"message": "gagal menghapus file tugas",
 		})
 	}
+
+	_ = AutoProgress(submission.SiswaID, submission.Modul.KursusID)
 
 	return c.JSON(fiber.Map{
 		"message": "file tugas berhasil dihapus",
