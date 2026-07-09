@@ -4,9 +4,11 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/irfanCode-code/kursku/backend/config"
 )
 
 func main() {
+	config.ConnectDatabase()
 	app := fiber.New()
 
 	app.Get("/", func(c fiber.Ctx) error {
