@@ -157,7 +157,7 @@ func DeleteModul(c fiber.Ctx) error {
 	if modul.FileUrl != "" {
 		err := os.Remove(modul.FileUrl)
 		if err != nil {
-			fmt.Printf("gagal menghapus file fisik", err)
+			fmt.Printf("gagal menghapus file fisik")
 		}
 	}
 

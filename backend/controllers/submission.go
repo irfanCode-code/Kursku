@@ -153,7 +153,7 @@ func DeleteSubmission(c fiber.Ctx) error {
 	if submission.FileUrl != "" {
 		err := os.Remove(submission.FileUrl)
 		if err != nil {
-			fmt.Printf("gagal menghapus file", err)
+			fmt.Printf("gagal menghapus file")
 		}
 	}
 
