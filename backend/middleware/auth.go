@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// jwt from env
 var JWT_SECRET = []byte(os.Getenv("JWT_SECRET"))
 
 func AuthRequired(c fiber.Ctx) error {
