@@ -14,14 +14,14 @@ func SetUp(app *fiber.App) {
 
 	// auth
 	auth := api.Group("/auth")
-	auth.Post("/register", controllers.Register)
-	auth.Post("/login", controllers.Login)
+	auth.Post("/register", controllers.Register) //done
+	auth.Post("/login", controllers.Login)       //done
 	// get Profil
-	auth.Get("/profile", middlewares.AuthRequired, controllers.GetUserProfil)
+	auth.Get("/profile", middlewares.AuthRequired, controllers.GetUserProfil) //done
 	// kursus
 	kursus := api.Group("/kelas", middlewares.AuthRequired)
-	kursus.Post("/", controllers.CreateKursus)
-	kursus.Get("/", controllers.GetAllKursus)
+	kursus.Post("/", controllers.CreateKursus) //done
+	kursus.Get("/", controllers.GetAllKursus)  //
 	kursus.Get("/:id", controllers.GetKursusByID)
 	kursus.Put("/:id", controllers.UpdateKursus)
 	kursus.Delete("/:id", controllers.DeleteKursus)

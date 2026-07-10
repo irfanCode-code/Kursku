@@ -59,6 +59,15 @@ func CreateKursus(c fiber.Ctx) error {
 		})
 	}
 
+	if err := config.DB.Model(&models.User{}).Where("id = ?", newKursus.GuruID).Update("role", "guru").Error; err != nil {
+	}
+
+	if err := config.DB.Preload("Guru").First(&newKursus, newKursus.ID).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "gagal memuat data relasi guru",
+		})
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "berhasil membuat kursus baru",
 		"kursus":  newKursus,
