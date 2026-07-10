@@ -246,18 +246,20 @@ func JoinKelas(c fiber.Ctx) error {
 }
 
 func GetKelasDiikuti(c fiber.Ctx) error {
-	siswaID := c.Params("siswa_id")
+	siswaID := c.Locals("user_id")
 	var daftar []models.Progress
 
-	if err := config.DB.Preload("kursus").Where("siswa_id = ?", siswaID).Find(&daftar).Error; err != nil {
+	if err := config.DB.Preload("Kursus").Where("siswa_id = ?", siswaID).Find(&daftar).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "gagal mengambil kelas yang diikuti",
 		})
 	}
 
-	var daftarDiikuti []models.Kursus
+	daftarDiikuti := make([]models.Kursus, 0)
 	for _, e := range daftar {
-		daftarDiikuti = append(daftarDiikuti, e.Kursus)
+		if e.Kursus.ID != 0 {
+			daftarDiikuti = append(daftarDiikuti, e.Kursus)
+		}
 	}
 
 	return c.JSON(fiber.Map{
