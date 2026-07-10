@@ -137,7 +137,7 @@ func DeleteKursus(c fiber.Ctx) error {
 func GetAllKursus(c fiber.Ctx) error {
 	var kursus []models.Kursus
 
-	if err := config.DB.Preload("guru").Find(&kursus).Error; err != nil {
+	if err := config.DB.Preload("Guru").Find(&kursus).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "gagal mengambil semua data",
 		})
@@ -153,7 +153,7 @@ func GetKursusByID(c fiber.Ctx) error {
 	var kursusID = c.Params("id")
 	var kursus []models.Kursus
 
-	if err := config.DB.Preload("guru").First(&kursus, kursusID).Error; err != nil {
+	if err := config.DB.Preload("Guru").First(&kursus, kursusID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "data tidak ditemukan",
 		})
