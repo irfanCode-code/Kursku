@@ -10,7 +10,6 @@ func CreateKursus(c fiber.Ctx) error {
 	type KursusRequest struct {
 		Judul     string `json:"judul"`
 		Deskripsi string `json:"deskripsi"`
-		GuruID    uint   `json:"guru_id"`
 	}
 
 	var input KursusRequest
@@ -20,19 +19,13 @@ func CreateKursus(c fiber.Ctx) error {
 		})
 	}
 
-	if input.Judul == "" || input.GuruID == 0 {
+	if input.Judul == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "judul dan guru_id harus diisi",
+			"message": "judul harus diisi",
 		})
 	}
 
 	var user models.User
-	if err := config.DB.First(&user, input.GuruID).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "guru tidak ditemukan",
-		})
-	}
-
 	if user.Role == "siswa" {
 		err := config.DB.Model(&user).Update("role", "guru").Error
 		if err != nil {
@@ -42,13 +35,22 @@ func CreateKursus(c fiber.Ctx) error {
 		}
 	}
 
-	generateCode := "KURS-" + user.Nama[:2] + "77"
+	userID := c.Locals("user_id")
+	var guruID uint
+
+	if idFloat, ok := userID.(float64); ok {
+		guruID = uint(idFloat)
+	} else if idInt, ok := userID.(int); ok {
+		guruID = uint(idInt)
+	}
+
+	generateCode := "KURS-" + generateRandomString(5)
 
 	newKursus := models.Kursus{
 		Judul:     input.Judul,
 		Deskripsi: input.Deskripsi,
+		GuruID:    guruID,
 		JoinCode:  generateCode,
-		GuruID:    user.ID,
 	}
 
 	if err := config.DB.Create(&newKursus).Error; err != nil {
