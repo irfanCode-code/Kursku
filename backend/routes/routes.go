@@ -16,7 +16,8 @@ func SetUp(app *fiber.App) {
 	auth := api.Group("/auth")
 	auth.Post("/register", controllers.Register)
 	auth.Post("/login", controllers.Login)
-	auth.Get("/profile", controllers.GetUserProfil)
+	// get Profil
+	auth.Get("/profile", middlewares.AuthRequired, controllers.GetUserProfil)
 	// kursus
 	kursus := api.Group("/kelas", middlewares.AuthRequired)
 	kursus.Post("/", controllers.CreateKursus)

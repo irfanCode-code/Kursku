@@ -132,7 +132,8 @@ func Login(c fiber.Ctx) error {
 }
 
 func GetUserProfil(c fiber.Ctx) error {
-	userID := c.Params("id")
+	userID := c.Locals("user_id")
+
 	var user models.User
 
 	if err := config.DB.First(&user, userID).Error; err != nil {
