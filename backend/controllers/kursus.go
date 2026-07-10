@@ -184,7 +184,6 @@ func GetKelasKu(c fiber.Ctx) error {
 
 func JoinKelas(c fiber.Ctx) error {
 	type JoinRequest struct {
-		SiswaID  uint   `json:"siswa_id"`
 		JoinCode string `json:"join_code"`
 	}
 
@@ -195,6 +194,22 @@ func JoinKelas(c fiber.Ctx) error {
 		})
 	}
 
+	userIDLocal := c.Locals("user_id")
+	var siswaID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		siswaID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		siswaID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		siswaID = idUint
+	}
+
+	if siswaID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "harus login dulu",
+		})
+	}
+
 	var kursus models.Kursus
 	if err := config.DB.Where("join_code = ?", input.JoinCode).First(&kursus).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -202,16 +217,18 @@ func JoinKelas(c fiber.Ctx) error {
 		})
 	}
 
-	var checkProgress models.Progress
-	err := config.DB.Where("kursus_id = ? AND siswa_id = ?", kursus.ID, input.SiswaID).First(&checkProgress).Error
-	if err == nil {
+	var checkProgress []models.Progress
+
+	config.DB.Where("kursus_id = ? AND siswa_id = ?", kursus.ID, siswaID).Limit(1).Find(&checkProgress)
+
+	if len(checkProgress) > 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "kamu sudah bergabung di kelas ini",
 		})
 	}
 
 	newProgress := models.Progress{
-		SiswaID:  input.SiswaID,
+		SiswaID:  siswaID,
 		KursusID: kursus.ID,
 		Progress: 0.0,
 	}
