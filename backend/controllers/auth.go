@@ -32,11 +32,11 @@ func Register(c fiber.Ctx) error {
 		})
 	}
 
-	var adaUser models.User
-	err := config.DB.Where("email = ?", input.Email).First(&adaUser).Error
-	if err == nil {
+	var totalUser int64
+	config.DB.Model(&models.User{}).Where("email = ?", input.Email).Count(&totalUser)
+	if totalUser > 0 {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-			"message": "email sudah digunakan",
+			"message": "Email sudah digunakan",
 		})
 	}
 
