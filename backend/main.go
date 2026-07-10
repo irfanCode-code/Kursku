@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/irfanCode-code/kursku/backend/config"
 	"github.com/irfanCode-code/kursku/backend/models"
+	"github.com/irfanCode-code/kursku/backend/routes"
 )
 
 func main() {
@@ -28,6 +29,8 @@ func main() {
 	fmt.Println("berhasil melakukan migrasi database")
 	fmt.Println("berhasil terkoneksi ke database")
 	app := fiber.New()
+
+	routes.SetUp(app)
 
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello, World!")
