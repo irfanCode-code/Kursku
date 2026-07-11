@@ -218,12 +218,30 @@ func GetSubmissionByModul(c fiber.Ctx) error {
 
 func GetSubmissionById(c fiber.Ctx) error {
 	submissionID := c.Params("id")
+	userRole := c.Locals("role")
+
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
 	var submission models.Submission
 
-	err := config.DB.Preload("siswa").Preload("modul").First(&submission, submissionID).Error
+	err := config.DB.Preload("Siswa").Preload("Modul").First(&submission, submissionID).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "tugas tidak ditemukan",
+		})
+	}
+
+	if userRole == "siswa" && submission.SiswaID != currentUserID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "kamu tidak memiliki akses untuk melihat pengumpulan tugas ini",
 		})
 	}
 
