@@ -45,5 +45,5 @@ func SetUp(app *fiber.App) {
 	submission.Delete("/:id", controllers.DeleteSubmission)
 	// progress
 	progress := api.Group("/progress", middlewares.AuthRequired)
-	progress.Get("/siswa/:siswa_id/kursus/:kursus_id", controllers.GetSiswaProgress)
+	progress.Get("/kursus/:kursus_id", controllers.GetSiswaProgress)
 }

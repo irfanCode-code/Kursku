@@ -199,11 +199,34 @@ func UpdateSubmission(c fiber.Ctx) error {
 
 func DeleteSubmission(c fiber.Ctx) error {
 	SubmissionID := c.Params("id")
-	var submission models.Submission
+	userRole := c.Locals("role")
 
-	if err := config.DB.First(&submission, SubmissionID).Error; err != nil {
+	if userRole != "siswa" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "hanya pemiliknya dan admin yang bisa menghapus file",
+		})
+	}
+
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
+	var submission models.Submission
+	if err := config.DB.Preload("Modul").First(&submission, SubmissionID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "data tugas tidak ditemukan",
+		})
+	}
+
+	if submission.SiswaID != currentUserID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "kamu tidak bisa menghapus milik orang lain",
 		})
 	}
 
