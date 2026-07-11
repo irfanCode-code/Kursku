@@ -194,11 +194,42 @@ func UpdateModul(c fiber.Ctx) error {
 
 func DeleteModul(c fiber.Ctx) error {
 	modulID := c.Params("id")
-	var modul models.Modul
+	userRole := c.Locals("role")
 
+	if userRole != "guru" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "hanya guru yang bisa menghapus modul ini",
+		})
+	}
+
+	userIDLocal := c.Locals("user_id")
+	var guruID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		guruID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		guruID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		guruID = idUint
+	}
+
+	if guruID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "sesi telah habis silahkan login kembali",
+		})
+	}
+
+	var modul models.Modul
 	if err := config.DB.First(&modul, modulID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "modul tidak ditemukan",
+		})
+	}
+
+	var kursus models.Kursus
+	err := config.DB.Where("id = ? AND guru_id = ?", modul.KursusID, guruID).First(&kursus).Error
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "kamu tidak memiliki akses untuk menghapus modul ini",
 		})
 	}
 
