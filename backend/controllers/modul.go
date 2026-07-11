@@ -15,6 +15,23 @@ func CreateModul(c fiber.Ctx) error {
 	judul := c.FormValue("judul")
 	deskripsi := c.FormValue("deskripsi")
 	kursusIDstr := c.FormValue("kursus_id")
+	userRole := c.Locals("role")
+
+	userIDLocal := c.Locals("user_id")
+	var guruID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		guruID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		guruID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		guruID = idUint
+	}
+
+	if userRole != "guru" || guruID == 0 {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "hanya guru yang bisa buat modul",
+		})
+	}
 
 	if judul == "" || kursusIDstr == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -31,9 +48,9 @@ func CreateModul(c fiber.Ctx) error {
 	}
 
 	var kursus models.Kursus
-	if err := config.DB.First(&kursus, kursusID).Error; err != nil {
+	if err := config.DB.Where("id = ? AND guru_id = ?", kursusID, guruID).First(&kursus).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "kursus tidak ditemukan, gagal menambahakan modul",
+			"message": "kamu tidak memiliki akses untuk membuat modul",
 		})
 	}
 
