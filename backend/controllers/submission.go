@@ -60,6 +60,12 @@ func CreateSubmission(c fiber.Ctx) error {
 		})
 	}
 
+	if !IsSiswaEnrolled(siswaID, modul.KursusID) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "akses ditolak! kamu belum pernah join ke kelas ini",
+		})
+	}
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -130,6 +136,20 @@ func UpdateSubmission(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "tugas tidak ditemukan",
 		})
+	}
+
+	if userRole != "siswa" {
+		if submission.SiswaID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak memiliki akses ke kelas ini",
+			})
+		}
+
+		if !IsSiswaEnrolled(currentUserID, submission.Modul.KursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak ada di dalam daftar loo",
+			})
+		}
 	}
 
 	gradeStr := c.FormValue("grade")
@@ -224,6 +244,19 @@ func DeleteSubmission(c fiber.Ctx) error {
 		})
 	}
 
+	if userRole != "siswa" {
+		if submission.SiswaID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak memiliki akses ke kelas ini",
+			})
+		}
+		if !IsSiswaEnrolled(currentUserID, submission.Modul.KursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak ada di dalam daftar loo",
+			})
+		}
+	}
+
 	if submission.SiswaID != currentUserID {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"message": "kamu tidak bisa menghapus milik orang lain",
@@ -251,20 +284,86 @@ func DeleteSubmission(c fiber.Ctx) error {
 }
 
 func GetSubmissionByModul(c fiber.Ctx) error {
-	modulID := c.Params("modul_id")
-	var submission []models.Submission
+	modulIDstr := c.Params("modul_id")
+	userRole := c.Locals("role")
 
-	err := config.DB.Preload("Siswa").Where("modul_id = ?", modulID).Find(&submission).Error
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
+	modulID64, err := strconv.ParseUint(modulIDstr, 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "gagal mengambil tugas yang dikumpulkan",
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "format id modul tidak valid",
+		})
+	}
+	modulID := uint(modulID64)
+
+	var modul models.Modul
+	if err := config.DB.First(&modul, modulID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "modul tidak ditemukan",
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "berhasil mengambil tugas yang dikumpulkan",
-		"total":   len(submission),
-		"data":    submission,
+	if userRole == "siswa" {
+		if !IsSiswaEnrolled(currentUserID, modul.KursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "akses ditolak! kamu belum bergabung dengan kelas kursus ini",
+			})
+		}
+
+		var submission models.Submission
+		err = config.DB.Where("siswa_id = ? AND modul_id = ?", currentUserID, modulID).First(&submission).Error
+		if err != nil {
+			return c.JSON(fiber.Map{
+				"message": "kamu belum mengumpulkan tugas di modul ini",
+				"data":    nil,
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil data tugas kamu",
+			"data":    submission,
+		})
+	}
+
+	if userRole == "guru" {
+		var kursus models.Kursus
+		if err := config.DB.First(&kursus, modul.KursusID).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "kursus tidak ditemukan",
+			})
+		}
+		if kursus.GuruID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak berhak melihat tugas dari kelas milik guru lain",
+			})
+		}
+
+		var allSubmissions []models.Submission
+		err = config.DB.Preload("Siswa").Where("modul_id = ?", modulID).Find(&allSubmissions).Error
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "gagal mengambil data pengumpulan tugas siswa",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil semua tugas siswa di modul ini",
+			"count":   len(allSubmissions),
+			"data":    allSubmissions,
+		})
+	}
+
+	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		"message": "role tidak dikenali",
 	})
 }
 
@@ -289,6 +388,20 @@ func GetSubmissionById(c fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "tugas tidak ditemukan",
 		})
+	}
+
+	if userRole != "siswa" {
+		if submission.SiswaID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak memiliki akses ke kelas ini",
+			})
+		}
+
+		if !IsSiswaEnrolled(currentUserID, submission.Modul.KursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak ada di dalam daftar loo",
+			})
+		}
 	}
 
 	if userRole == "siswa" && submission.SiswaID != currentUserID {
