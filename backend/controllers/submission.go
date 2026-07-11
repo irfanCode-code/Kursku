@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -12,18 +13,45 @@ import (
 )
 
 func CreateSubmission(c fiber.Ctx) error {
-	modulIDstr := c.FormValue("modul_id")
-	siswaIDstr := c.FormValue("siswa_id")
-
-	if modulIDstr == "" || siswaIDstr == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "modul id dan siswa id wajib diisi",
+	userRole := c.Locals("role")
+	if userRole != "siswa" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "hanya siswa yang dapat mengumpulkan tugas",
 		})
 	}
 
-	var modulID, siswaID uint
-	_, _ = fmt.Scanf(modulIDstr, "%d", &modulID)
-	_, _ = fmt.Scanf(siswaIDstr, "%d", siswaID)
+	userIDLocal := c.Locals("user_id")
+	var siswaID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		siswaID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		siswaID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		siswaID = idUint
+	}
+
+	if siswaID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "sesi tidak valid, silakan login kembali",
+		})
+	}
+
+	modulIDstr := c.Params("id")
+
+	if modulIDstr == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "modul id tidak ditemukan",
+		})
+	}
+
+	modulID64, err := strconv.ParseUint(modulIDstr, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "format modul tidak valid",
+		})
+	}
+
+	modulID := uint(modulID64)
 
 	var modul models.Modul
 	if err := config.DB.First(&modul, modulID).Error; err != nil {

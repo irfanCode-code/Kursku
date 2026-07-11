@@ -38,7 +38,7 @@ func SetUp(app *fiber.App) {
 	modul.Delete("/:id", controllers.DeleteModul)
 	// submission
 	submission := api.Group("/submission", middlewares.AuthRequired)
-	submission.Post("/", controllers.CreateSubmission)
+	submission.Post("/modul/:id", controllers.CreateSubmission)
 	submission.Get("/modul/:modul_id", controllers.GetSubmissionByModul)
 	submission.Get("/:id", controllers.GetSubmissionById)
 	submission.Put("/:id", controllers.UpdateSubmission)
