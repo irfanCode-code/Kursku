@@ -113,8 +113,19 @@ func CreateSubmission(c fiber.Ctx) error {
 
 func UpdateSubmission(c fiber.Ctx) error {
 	submissionID := c.Params("id")
-	var submission models.Submission
+	userRole := c.Locals("role")
 
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
+	var submission models.Submission
 	if err := config.DB.First(&submission, submissionID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "tugas tidak ditemukan",
@@ -123,18 +134,34 @@ func UpdateSubmission(c fiber.Ctx) error {
 
 	gradeStr := c.FormValue("grade")
 	if gradeStr != "" {
-		var newGrade float32
-		_, err := fmt.Sscanf(gradeStr, "%f", newGrade)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "format harus berupa angka desimal",
+		if userRole != "guru" {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "hanya guru yang berhak memberikan atau merubah nilai",
 			})
 		}
-		submission.Grade = newGrade
+
+		newGrade, err := strconv.ParseFloat(gradeStr, 32)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "format nilai harus berupa angka desimal",
+			})
+		}
+		submission.Grade = float32(newGrade)
 	}
 
 	file, err := c.FormFile("file")
 	if err == nil {
+		if userRole != "siswa" {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "guru tidak bisa mengubah tugas milik siswa",
+			})
+		}
+		if submission.SiswaID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak bisa mengubah punya orang lain",
+			})
+		}
+
 		ext := filepath.Ext(file.Filename)
 		if ext != ".pdf" {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -145,11 +172,13 @@ func UpdateSubmission(c fiber.Ctx) error {
 		uploadDir := "./uploads/submissions"
 		uniqueFileName := fmt.Sprintf("tugas_update_%d_%s", time.Now().Unix(), file.Filename)
 		newFilePath := filepath.Join(uploadDir, uniqueFileName)
+
 		if err := c.SaveFile(file, newFilePath); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"message": "gagal update file",
 			})
 		}
+
 		if submission.FileUrl != "" {
 			_ = os.Remove(submission.FileUrl)
 		}
