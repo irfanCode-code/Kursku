@@ -202,7 +202,7 @@ func GetSubmissionByModul(c fiber.Ctx) error {
 	modulID := c.Params("modul_id")
 	var submission []models.Submission
 
-	err := config.DB.Preload("siswa").Where("modul_id = ?", modulID).Find(&submission).Error
+	err := config.DB.Preload("Siswa").Where("modul_id = ?", modulID).Find(&submission).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "gagal mengambil tugas yang dikumpulkan",
