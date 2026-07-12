@@ -112,6 +112,7 @@ func GetSiswaProgress(c fiber.Ctx) error {
 		"message": "role tidak dikenali",
 	})
 }
+
 func IsSiswaEnrolled(siswaID uint, kursusID uint) bool {
 	var count int64
 	config.DB.Model(&models.Progress{}).Where("siswa_id = ? AND kursus_id = ?", siswaID, kursusID).Count(&count)

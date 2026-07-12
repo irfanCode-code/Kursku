@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -252,19 +253,71 @@ func DeleteModul(c fiber.Ctx) error {
 }
 
 func GetAllModul(c fiber.Ctx) error {
-	kursusID := c.Params("kursus_id")
-	var modul []models.Modul
+	userRole := c.Locals("role")
+	kursusIDStr := c.Params("kursus_id")
+	kursusID64, _ := strconv.ParseUint(kursusIDStr, 10, 32)
+	currentKursusID := uint(kursusID64)
 
-	if err := config.DB.Where("kursus_id = ?", kursusID).Find(&modul).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "gagal mengambil daftar modul di kursus ini",
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
+	if userRole == "siswa" {
+		if !IsSiswaEnrolled(currentUserID, currentKursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak ada di kelas",
+			})
+		}
+
+		var moduls []models.Modul
+		if err := config.DB.Where("kursus_id = ?", currentKursusID).Find(&moduls).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "gagal mengambil modul di kursus ini",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil daftar modul",
+			"total":   len(moduls),
+			"data":    moduls,
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "berhasil mengambil daftar modul",
-		"total":   len(modul),
-		"data":    modul,
+	if userRole == "guru" {
+		var kursus models.Kursus
+		if err := config.DB.First(&kursus, currentKursusID).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "kursus tidak ditemukan",
+			})
+		}
+
+		if kursus.GuruID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak berhak melihat modul dari kelas milik guru lain",
+			})
+		}
+
+		var modul []models.Modul
+		if err := config.DB.Where("kursus_id = ?", currentKursusID).Find(&modul).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "gagal mengambil daftar modul di kursus ini",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil daftar modul",
+			"total":   len(modul),
+			"data":    modul,
+		})
+	}
+	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		"message": "role tidak ditemukan",
 	})
 }
 
