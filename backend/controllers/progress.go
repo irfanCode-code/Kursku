@@ -55,6 +55,11 @@ func GetSiswaProgress(c fiber.Ctx) error {
 	kursusID := uint(kursusID64)
 
 	if userRole == "siswa" {
+		if !IsSiswaEnrolled(currentUserID, kursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu belum pernah join kelas ini",
+			})
+		}
 		var progress models.Progress
 		err = config.DB.Where("siswa_id = ? AND kursus_id = ?", currentUserID, kursusID).First(&progress).Error
 		if err != nil {
