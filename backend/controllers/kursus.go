@@ -142,11 +142,42 @@ func UpdateKursus(c fiber.Ctx) error {
 
 func DeleteKursus(c fiber.Ctx) error {
 	kursusID := c.Params("id")
+	userRoleID := c.Locals("role")
+
+	if userRoleID != "guru" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "hanya guru yang bisa melakukan update modul",
+		})
+	}
+
+	userIDLocal := c.Locals("user_id")
+	var guruID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		guruID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		guruID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		guruID = idUint
+	}
+
+	if guruID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "sesi telah habis. silahkan login kembali",
+		})
+	}
 
 	var kursus models.Kursus
+
 	if err := config.DB.First(&kursus, kursusID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "data tidak ditemukan",
+		})
+	}
+
+	err := config.DB.Where("id = ? AND guru_id = ?", kursusID, guruID).First(&kursus).Error
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "kamu tidak memiliki akses ke kelas ini",
 		})
 	}
 
