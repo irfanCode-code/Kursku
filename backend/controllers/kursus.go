@@ -76,6 +76,27 @@ func CreateKursus(c fiber.Ctx) error {
 
 func UpdateKursus(c fiber.Ctx) error {
 	kursusID := c.Params("id")
+	userRole := c.Locals("role")
+
+	userIDLocal := c.Locals("user_id")
+	var guruID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		guruID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		guruID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		guruID = idUint
+	}
+
+	var kursus models.Kursus
+
+	if userRole != "guru" || guruID == 0 {
+		if kursus.GuruID != guruID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "hanya guru yang bisa update",
+			})
+		}
+	}
 
 	type UpdateCourseRequest struct {
 		Judul     string `json:"judul"`
@@ -89,10 +110,16 @@ func UpdateKursus(c fiber.Ctx) error {
 		})
 	}
 
-	var kursus models.Kursus
 	if err := config.DB.First(&kursus, kursusID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "kursus tidak ditemukan",
+		})
+	}
+
+	err := config.DB.Where("id = ? AND guru_id = ?", kursusID, guruID).First(&kursus).Error
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"message": "kamu tidak memiliki akses ke kelas ini",
 		})
 	}
 

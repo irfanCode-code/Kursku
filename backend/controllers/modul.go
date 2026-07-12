@@ -322,17 +322,69 @@ func GetAllModul(c fiber.Ctx) error {
 }
 
 func GetModulById(c fiber.Ctx) error {
-	ModulID := c.Params("id")
+	modulIDstr := c.Params("id")
+	userRole := c.Locals("role")
+
+	userIDLocal := c.Locals("user_id")
+	var currentUserID uint
+	if idFloat, ok := userIDLocal.(float64); ok {
+		currentUserID = uint(idFloat)
+	} else if idInt, ok := userIDLocal.(int); ok {
+		currentUserID = uint(idInt)
+	} else if idUint, ok := userIDLocal.(uint); ok {
+		currentUserID = idUint
+	}
+
+	modulID64, err := strconv.ParseUint(modulIDstr, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "format id modul tidak valid",
+		})
+	}
+	modulID := uint(modulID64)
+
 	var modul models.Modul
 
-	if err := config.DB.First(&modul, ModulID).Error; err != nil {
+	if err := config.DB.First(&modul, modulID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "modul tidak ditemukan",
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "berhasil mengambil modul",
-		"data":    modul,
+	if userRole == "siswa" {
+		if !IsSiswaEnrolled(currentUserID, modul.KursusID) {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "akses ditolak! kamu tidak terdaftar di kelas kursus ini",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil data modul",
+			"data":    modul,
+		})
+	}
+
+	if userRole == "guru" {
+		var kursus models.Kursus
+		if err := config.DB.First(&kursus, modul.KursusID).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "data kursus dari modul ini tidak ditemukan",
+			})
+		}
+
+		if kursus.GuruID != currentUserID {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "kamu tidak berhak melihat detail modul dari kelas milik guru lain",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "berhasil mengambil data modul",
+			"data":    modul,
+		})
+	}
+
+	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		"message": "role tidak ditemukan",
 	})
 }
