@@ -1,17 +1,15 @@
 'use client'
 
-import { useEffect, useState } from "react"
-
-export default function login() {
-    const [count, setCount] = useState(0);
-
-    useEffect(() => {
-  console.log('Runs when count changes');
-}, [count]);
-    return(
-        <div>
-            <p>nilai: {count}</p>
-            <button onClick={() => {setCount(count + 1)}}>tambah</button>
+export default function Login() {
+    return (
+        <div className="mt-21 bg-red-100">
+            <div className="bg-green-100">
+                <div className="bg-blue-100">
+                    <div>
+                    
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
